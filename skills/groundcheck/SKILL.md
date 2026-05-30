@@ -1,7 +1,7 @@
 ---
 name: groundcheck
 description: Use when the user wants to fact-check, verify, or ground existing content — checking generated text, an answer, a report, RAG output, documentation, or code for fabricated or unsupported claims. Triggers on requests like "verify these claims", "check for hallucinations", "are these citations / numbers / APIs real", "fact-check this before I publish", or "is this actually supported by the source". Extracts atomic claims, gathers evidence (web, source files, docs, RAG context), assigns a per-claim verdict with citations, and flags which claims to retract, qualify, or send back. This is SINGLE-agent claim verification grounded in evidence — NOT multi-agent debate over which decision is best (that is agent-arena). Do not use for pure opinions, creative content, or code logic already covered by deterministic tests.
-version: 0.1.0
+version: 0.1.1
 author: zhjai
 license: MIT
 metadata:
@@ -45,11 +45,11 @@ Decompose the content into **atomic** claims — one checkable assertion each. *
 
 ### 2. Classify each claim
 
-`factual` · `numerical` · `temporal/current` · `causal` · `comparative` · `legal/medical/financial` · `code-api-behavior` · `quote/citation-attribution` · `interpretation/opinion` (the last is usually out of scope — flag, do not verify).
+`factual` · `numerical` · `temporal` · `causal` · `comparative` · `legal-med-fin` · `code-api` · `citation` · `interpretation` (the last is usually out of scope — flag, do not verify). Enum values are defined normatively in [`interop/claim-ledger.md`](../../interop/claim-ledger.md).
 
 ### 3. Gather evidence (grounding)
 
-Prefer deterministic, external sources, in roughly this order of strength:
+"Grounding" here means one thing — **checking a claim against a verifiable external source**. That single notion covers source/test verification, doc/spec lookup, current-fact web search, citation-attribution checks, and RAG groundedness (is the claim supported by what was actually retrieved?). Prefer deterministic, external sources, in roughly this order of strength:
 
 - run tests / execute code / compute numbers
 - read source files, configs, dependency manifests
@@ -73,10 +73,12 @@ extracted → checked → (challenged → revised → rechecked)* → resolved |
 
 Emit a **Claim Ledger** (see `interop/claim-ledger.md`). Each claim carries an `action`:
 
-- `keep` — supported, leave as is
-- `revise` — needs_qualification / partially_supported → rewrite with the caveat
+- `keep` — supported (or `unverifiable`, with `flag: low_confidence`); leave as is
+- `revise` — needs_qualification / partially_supported / outdated → rewrite with the caveat, or re-ground
 - `retract` — refuted with no salvageable version → remove the claim
-- `send_back` — refuted, owned by another agent → return to that agent to fix (see Interop)
+- `send_back` — refuted (or material `partially_supported`) owned by another agent → return to that agent to fix (see Interop)
+
+`action` is exactly one of these four; low-confidence passes use the separate `flag` field, not an action. Enums are normative in [`interop/claim-ledger.md`](../../interop/claim-ledger.md).
 
 ## Anti-False-Authority (the verifier is not the truth)
 
@@ -102,12 +104,12 @@ When a `refuted` claim is owned by a specific agent (`source_agent`), return it 
 
 - The original answer is **immutable** — revisions are appended (`revision_of`), the original error stays on record.
 - A revision must **cite what changed**, not silently overwrite.
-- Send the **evidence**, not GroundCheck's opinion or a "I think it's X" — to avoid the source agent overfitting to appease the checker rather than reasoning independently.
+- Send the **raw evidence only** — never the verdict label or `dispute_reason` (those stay internal to the ledger); sending a conclusion anchors the source agent into appeasing the checker instead of reasoning from evidence.
 
 ### Anti-loop (termination)
 
-- A claim is sent back at most **1–2 times**.
-- Still `refuted` → mark `unresolved`, stop, and disclose it in the final synthesis ("this claim was checked false and not fixed").
+- A claim is sent back at most `max_send_backs` times (**default 2**), tracked by `send_back_count` in the ledger.
+- Still `refuted` after the cap → mark `unresolved`, stop, and disclose it in the final synthesis ("this claim was checked false and not fixed").
 - The base case is **deterministic evidence**, never "have another agent check again". Verification depth is finite: single-agent check → (escalate once to evidence_arena) → stop.
 
 ### Escalation to agent-arena (reverse direction)

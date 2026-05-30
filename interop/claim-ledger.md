@@ -4,6 +4,8 @@ The Claim Ledger is the **contract** between GroundCheck and any multi-agent sys
 (agent-arena, CrewAI, AutoGen, LangGraph, …). GroundCheck emits it; orchestrators
 consume it to route `send_back` / `revise` / `retract` / `keep`.
 
+**This file is the normative source for all enums** — `type`, `verdict`, `action`, `flag`, and evidence `kind`. `SKILL.md` and `fact-gate.md` defer to the values defined here.
+
 ## Schema
 
 ```yaml
@@ -28,8 +30,11 @@ claim_ledger:
         evidence_date: "2026-05-30" # when the evidence was observed (staleness!)
     checker_agent: codex            # who/what produced this verdict (auditability)
     checked_at: "2026-05-30"
-    action: send_back               # keep|revise|retract|send_back
-    dispute_reason: "global tables are eventually consistent; claim overgeneralizes single-region behavior"
+    action: send_back               # keep|revise|retract|send_back  (exactly one)
+    flag: null                      # null | low_confidence  (non-action marker for passes that need a warning)
+    send_back_count: 1              # times this claim has been sent back
+    max_send_backs: 2               # cap; on exceeding -> state: unresolved, stop
+    dispute_reason: "overgeneralizes single-region behavior"   # INTERNAL note; NOT sent to source_agent (only raw evidence is)
     revision_of: null               # id of the claim this revises (append-only history)
     status_history:                 # immutable trail
       - {state: extracted, at: "2026-05-30"}
@@ -50,17 +55,28 @@ claim_ledger:
   trail; originals are never mutated.
 - **severity** — lets the orchestrator prioritize (a refuted high-severity claim blocks; a
   low-severity unverifiable one can pass with a flag).
+- **flag** — a non-action marker (e.g. `low_confidence`) so `action` stays exactly one of
+  keep/revise/retract/send_back.
+- **send_back_count / max_send_backs** — deterministic anti-loop: a claim is sent back at most
+  `max_send_backs` (default 2); on exceeding, set `state: unresolved` and stop. The original
+  entry keeps its verdict immutably; only revision entries (`revision_of`) advance state.
+- **dispute_reason** — internal note only; on send-back the source_agent receives the raw
+  evidence, never this reason or the verdict label (prevents anchoring).
 
 ## Verdict → action mapping (default)
 
 | verdict | typical action | gate behavior |
 |---|---|---|
-| supported | keep | pass |
-| partially_supported | revise | pass with caveat or send_back if material |
-| needs_qualification | revise | demand caveat |
-| outdated | revise | re-ground against current source |
-| unverifiable | keep + flag | pass with low-confidence flag |
-| refuted | retract or send_back | block / return to source_agent |
+| supported | `keep` | pass |
+| partially_supported | `revise` (or `send_back`) | revise; `send_back` to source_agent if the unsupported part is material |
+| needs_qualification | `revise` | demand caveat |
+| outdated | `revise` | re-ground against current source |
+| unverifiable | `keep` + `flag: low_confidence` | pass with low-confidence flag |
+| refuted | `retract` or `send_back` | block; `send_back` to source_agent if owned |
+
+`action` is always exactly one of `keep` / `revise` / `retract` / `send_back`. Low-confidence
+passes are expressed with the separate `flag` field, not an action. `send_back` is triggered by
+`refuted` and by material `partially_supported`.
 
 ## Anti-false-authority requirement
 

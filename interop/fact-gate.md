@@ -15,10 +15,12 @@ sits, *how* send-back works, and *how* it terminates.
   │ groundcheck(answer) per agent → ledger     │
   └──────────────────────────────────────────┘
         │  route by verdict
-        ├─ refuted            → SEND BACK to source_agent (+ evidence) → revise
-        ├─ needs_qualification → demand caveat
-        ├─ unverifiable        → pass, low-confidence flag
-        └─ supported           → pass
+        ├─ refuted              → SEND BACK to source_agent (+ evidence) → revise
+        ├─ partially_supported  → revise; SEND BACK if the unsupported part is material
+        ├─ needs_qualification  → demand caveat (revise)
+        ├─ outdated             → re-ground against current source (revise)
+        ├─ unverifiable         → pass, flag: low_confidence
+        └─ supported            → pass
         │
         ▼
   cross-critique / debate
@@ -40,8 +42,9 @@ a shared hallucination. **Why also post-debate:** some claims only appear or cha
 
 When a `refuted` claim has a `source_agent`:
 
-1. Return to that agent: the claim, its `dispute_reason`, and the **raw refuting evidence**
-   (source + quote + date). Do **not** send GroundCheck's opinion or a verdict label alone.
+1. Return to that agent: the claim and the **raw refuting evidence** (source + quote + date).
+   Do **not** send the verdict label or `dispute_reason` — those stay internal to the ledger;
+   sending a conclusion anchors the agent.
 2. The agent produces a revision recorded as a new ledger entry with `revision_of: <claim id>`.
    The original entry is **immutable** and stays on record.
 3. The revision must **state what changed** and why; it is then re-checked (`rechecked`).
@@ -51,7 +54,7 @@ overfitting to appease the checker instead of reasoning from the evidence itself
 
 ## Termination (anti-loop)
 
-- A claim is sent back at most **1–2 times**.
+- A claim is sent back at most `max_send_backs` times (**default 2**), tracked by `send_back_count`.
 - Still `refuted` after the cap → `state: unresolved`, stop, and **disclose in synthesis**
   ("claim X by agent Y was checked false and not resolved").
 - The base case is **deterministic evidence**, never "have another agent check again".
