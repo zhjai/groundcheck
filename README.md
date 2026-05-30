@@ -1,5 +1,20 @@
 # GroundCheck
 
+<p align="center">
+  <img src="assets/banner.svg" alt="GroundCheck — single-agent, evidence-grounded claim verification to catch hallucinations" width="100%">
+</p>
+
+<p align="center">
+  <strong>English</strong> · <a href="README.zh.md">中文</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/skill-groundcheck-blue" alt="skill">
+  <img src="https://img.shields.io/badge/version-0.1.0-informational" alt="version">
+  <a href="https://github.com/zhjai/agent-arena"><img src="https://img.shields.io/badge/companion-agent--arena-6b46c1" alt="agent-arena"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
+</p>
+
 > **Single-agent, evidence-grounded claim verification** — catch fabricated facts by checking each claim against real evidence, not by asking more models to agree.
 
 GroundCheck takes content that already exists — a generated answer, a report, RAG output, docs, or code — extracts the verifiable claims, grounds each one in real evidence, and returns a per-claim verdict with citations plus an action: **keep / revise / retract / send back**.

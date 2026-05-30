@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 280" width="1200" height="280" role="img" aria-label="GroundCheck — single-agent, evidence-grounded claim verification to catch hallucinations">
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#6e7681"/>
+    </marker>
+    <marker id="arrG" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#3fb950"/>
+    </marker>
+    <marker id="arrR" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#f85149"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="280" fill="#0d1117"/>
+  <line x1="0" y1="0" x2="1200" y2="0" stroke="#21262d" stroke-width="1.5"/>
+  <line x1="0" y1="279" x2="1200" y2="279" stroke="#21262d" stroke-width="1.5"/>
+
+  <!-- ── Left: title block ── -->
+  <text x="48" y="104" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+        font-size="50" font-weight="800" fill="#f0f6fc" letter-spacing="-1">GroundCheck</text>
+  <text x="50" y="140" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+        font-size="17" font-weight="600" fill="#58a6ff">Single-agent · evidence-grounded claim verification</text>
+  <text x="50" y="166" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+        font-size="15" fill="#8b949e">Catch hallucinations by grounding each claim in evidence —</text>
+  <text x="50" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+        font-size="15" fill="#8b949e">not by asking more models to agree.</text>
+
+  <!-- chips -->
+  <g font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="11.5">
+    <rect x="50" y="212" width="92" height="24" rx="12" fill="#161b22" stroke="#30363d"/>
+    <text x="96" y="228" text-anchor="middle" fill="#8b949e">fact-gate</text>
+    <rect x="150" y="212" width="120" height="24" rx="12" fill="#161b22" stroke="#30363d"/>
+    <text x="210" y="228" text-anchor="middle" fill="#8b949e">claim ledger</text>
+    <rect x="278" y="212" width="104" height="24" rx="12" fill="#161b22" stroke="#30363d"/>
+    <text x="330" y="228" text-anchor="middle" fill="#8b949e">MIT · v0.1.0</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="470" y1="40" x2="470" y2="240" stroke="#21262d" stroke-width="1"/>
+
+  <!-- ── Right: claim → gate → verdict flow ── -->
+  <!-- claim box -->
+  <rect x="512" y="118" width="150" height="44" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="587" y="140" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Consolas,monospace"
+        font-size="13" fill="#e6edf3">claim</text>
+  <text x="587" y="155" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Consolas,monospace"
+        font-size="9.5" fill="#6e7681">from any content</text>
+
+  <!-- arrow to gate -->
+  <line x1="666" y1="140" x2="712" y2="140" stroke="#6e7681" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- evidence gate (shield) -->
+  <path d="M 790 96 L 846 110 L 846 150 Q 846 178 790 192 Q 734 178 734 150 L 734 110 Z"
+        fill="#1a1233" stroke="#a371f7" stroke-width="1.8"/>
+  <text x="790" y="138" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+        font-size="12.5" font-weight="700" fill="#d2a8ff">evidence</text>
+  <text x="790" y="156" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+        font-size="12.5" font-weight="700" fill="#d2a8ff">gate</text>
+
+  <!-- branch arrows -->
+  <!-- supported (up) -->
+  <path d="M 848 128 Q 900 128 940 104" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#arrG)"/>
+  <!-- refuted (down) -->
+  <path d="M 848 162 Q 900 162 940 186" fill="none" stroke="#f85149" stroke-width="2" marker-end="url(#arrR)"/>
+
+  <!-- supported verdict -->
+  <rect x="956" y="86" width="200" height="40" rx="8" fill="#0f2417" stroke="#238636" stroke-width="1.5"/>
+  <text x="974" y="111" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+        font-size="15" font-weight="700" fill="#3fb950">✓</text>
+  <text x="992" y="111" font-family="ui-monospace,SFMono-Regular,Consolas,monospace"
+        font-size="12.5" fill="#56d364">supported — keep</text>
+
+  <!-- refuted verdict -->
+  <rect x="956" y="164" width="200" height="40" rx="8" fill="#2d1214" stroke="#da3633" stroke-width="1.5"/>
+  <text x="974" y="189" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+        font-size="15" font-weight="700" fill="#f85149">✗</text>
+  <text x="992" y="189" font-family="ui-monospace,SFMono-Regular,Consolas,monospace"
+        font-size="12.5" fill="#ff7b72">refuted — send back</text>
+
+  <!-- bottom caption under flow -->
+  <text x="820" y="232" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Consolas,monospace"
+        font-size="11" fill="#484f58">extract atomic claims → ground in evidence → verdict + action</text>
+</svg>
