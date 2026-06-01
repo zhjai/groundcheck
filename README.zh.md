@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/skill-groundcheck-blue" alt="skill">
-  <img src="https://img.shields.io/badge/version-0.1.1-informational" alt="version">
+  <img src="https://img.shields.io/badge/version-0.1.2-informational" alt="version">
   <a href="https://github.com/zhjai/agent-arena"><img src="https://img.shields.io/badge/companion-agent--arena-6b46c1" alt="agent-arena"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
 </p>

@@ -1,12 +1,12 @@
 ---
 name: groundcheck
 description: Use when the user wants to fact-check, verify, or ground existing content — checking generated text, an answer, a report, RAG output, documentation, or code for fabricated or unsupported claims. Triggers on requests like "verify these claims", "check for hallucinations", "are these citations / numbers / APIs real", "fact-check this before I publish", or "is this actually supported by the source". Extracts atomic claims, gathers evidence (web, source files, docs, RAG context), assigns a per-claim verdict with citations, and flags which claims to retract, qualify, or send back. This is SINGLE-agent claim verification grounded in evidence — NOT multi-agent debate over which decision is best (that is agent-arena). Do not use for pure opinions, creative content, or code logic already covered by deterministic tests.
-version: 0.1.1
-author: zhjai
 license: MIT
 metadata:
-  tags: [groundcheck, fact-check, hallucination, claim-verification, groundedness, citation-verification, rag-evaluation, evidence-checking, verification-gate]
-  related_skills: [agent-arena]
+  version: "0.1.2"
+  author: zhjai
+  tags: "groundcheck, fact-check, hallucination, claim-verification, groundedness, citation-verification, rag-evaluation, evidence-checking, verification-gate"
+  related_skills: "agent-arena"
 ---
 
 # GroundCheck

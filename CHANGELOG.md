@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.2
+
+- **Spec-compliant frontmatter.** Move `version`/`author` under `metadata` (`version` as a quoted string) and convert `metadata.tags`/`related_skills` from YAML arrays to comma-separated strings — the [agentskills spec](https://agentskills.io/specification) defines `metadata` as a string→string map with no top-level `version`/`author`. The prior frontmatter was off-spec (parsers tolerated it); caught by a cross-environment Codex review reading the file against the spec.
+
 ## v0.1.1
 
 Cross-file consistency fixes found via an agent-arena review (Codex caught schema drift across the three spec files):
